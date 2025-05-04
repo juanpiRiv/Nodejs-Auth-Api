@@ -1,9 +1,11 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import productsRouter from './routes/products.routes.js';
-import cartsRouter from './routes/carts.routes.js';
+import productsRouter from './routes/product.routes.js'; // Corregido nombre
+import cartsRouter from './routes/cart.routes.js'; // Corregido nombre
 import viewsRouter from './routes/views.routes.js';
+import usersRouter from './routes/user.routes.js'; // Nueva ruta de usuarios
+import sessionsRouter from './routes/session.routes.js'; // Nueva ruta de sesiones
 import { engine } from 'express-handlebars';
 import path from 'path';
 import session from 'express-session';
@@ -48,10 +50,13 @@ app.use(express.static('public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
+
 // Rutas
 app.use('/api/products', productsRouter);
 app.use('/api/carts', cartsRouter);
-app.use('/', viewsRouter);
+app.use('/api/users', usersRouter); // Usar la nueva ruta de usuarios
+app.use('/api/sessions', sessionsRouter); // Usar la nueva ruta de sesiones
+app.use('/', viewsRouter); // Rutas de vistas (si las tienes)
 
 
 

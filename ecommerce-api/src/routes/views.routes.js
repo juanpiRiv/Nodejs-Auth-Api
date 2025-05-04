@@ -1,5 +1,5 @@
 import express from 'express';
-import Product from '../models/Product.model.js';
+import Product from '../dao/models/Product.model.js'; // Corregida la ruta del modelo de producto
 // import Cart from '../models/Cart.model.js'; // Ya no se usa directamente aquí
 import cartService from '../services/cart.service.js'; // Importar cartService
 

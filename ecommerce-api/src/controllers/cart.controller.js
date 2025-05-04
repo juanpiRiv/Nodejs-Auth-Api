@@ -1,6 +1,7 @@
+import { v4 as uuidv4 } from 'uuid'; // Para generar códigos únicos
 import cartService from '../services/cart.service.js';
-import productService from '../services/product.service.js'; // Importar productService
-import orderService from '../services/order.service.js'; // Importar orderService
+import productService from '../services/product.service.js';
+import ticketService from '../services/ticket.service.js'; // Renombrado de orderService a ticketService
 
 
 export const createCart = async (req, res) => {
@@ -186,61 +187,133 @@ export const deleteCart = async (req, res) => {
         res.status(500).json({ status: "error", message: error.message });
     }
 };
-export const checkoutCart = async (req, res) => {
+
+// Renombrado de checkoutCart a purchaseCart para reflejar la ruta /purchase
+export const purchaseCart = async (req, res) => {
     try {
         const { cid } = req.params;
+        const userEmail = req.user.email; // Obtener email del usuario autenticado (asegúrate que Passport lo establece)
+
+        console.log(`🛒 Iniciando proceso de compra para carrito ${cid} por usuario ${userEmail}`);
+
         const cart = await cartService.getCartById(cid);
 
-        if (!cart || cart.products.length === 0) {
-            console.log("⚠ Carrito vacío. Enviando estructura vacía.");
-            return res.render("checkout", { title: "Compra Finalizada", products: [], totalPrice: 0 });
+        if (!cart) {
+            console.log(`❌ Carrito ${cid} no encontrado.`);
+            return res.status(404).json({ status: 'error', message: 'Carrito no encontrado' });
+        }
+        if (cart.products.length === 0) {
+            console.log(`⚠ Carrito ${cid} está vacío.`);
+            return res.status(400).json({ status: 'error', message: 'El carrito está vacío' });
         }
 
-        // Extraer los productos para la orden
-        const purchasedProducts = cart.products.map(item => ({
-            product: item.product._id,
-            title: item.product.title,
-            price: item.product.price,
-            quantity: item.quantity,
-            thumbnails: item.product.thumbnails?.[0] || 'https://via.placeholder.com/150'
-        }));
+        let totalAmount = 0;
+        const productsToPurchase = [];
+        const productsNotPurchasedIds = []; // Guardará los IDs de productos sin stock
 
-        const totalPrice = purchasedProducts.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+        // 1. Verificar stock y calcular monto total
+        console.log(`🔍 Verificando stock para ${cart.products.length} items en carrito ${cid}...`);
+        for (const item of cart.products) {
+            const productId = item.product._id; // Asumiendo que product está populado o es solo ID
+            const quantityInCart = item.quantity;
 
-        console.log("📌 Enviando a Handlebars:", { products: purchasedProducts, totalPrice });
+            try {
+                const productData = await productService.getProductById(productId); // Obtener datos frescos del producto
 
-        // Guardar la orden en la base de datos
-        const newOrder = await orderService.createOrder({
-            cartId: cart._id,
-            products: purchasedProducts,
-            totalPrice
-        });
-        console.log("📝 Orden guardada correctamente:", newOrder._id); // Log ID de la orden
+                if (!productData) {
+                    console.log(`⚠ Producto ${productId} no encontrado en la base de datos. Omitiendo.`);
+                    productsNotPurchasedIds.push(productId);
+                    continue; // Saltar al siguiente item
+                }
 
-        // Vaciar el carrito en la base de datos después de crear la orden
-        try {
-            await cartService.updateCart(cid, []); // Actualizar con array vacío de productos
-            console.log(`🛒 Carrito ${cid} vaciado después de la compra.`);
-        } catch (updateError) {
-            // Loggear el error pero continuar, la orden ya se creó
-            console.error(`⚠️ Error al intentar vaciar el carrito ${cid} después de la compra:`, updateError);
+                if (productData.stock >= quantityInCart) {
+                    console.log(`✅ Stock suficiente para ${productData.title} (ID: ${productId}). Stock: ${productData.stock}, Cantidad: ${quantityInCart}`);
+                    productsToPurchase.push({
+                        product: productId,
+                        quantity: quantityInCart,
+                        price: productData.price // Usar precio actual del producto
+                    });
+                    totalAmount += productData.price * quantityInCart;
+                } else {
+                    console.log(`❌ Stock insuficiente para ${productData.title} (ID: ${productId}). Stock: ${productData.stock}, Cantidad: ${quantityInCart}`);
+                    productsNotPurchasedIds.push(productId);
+                }
+            } catch (productError) {
+                console.error(`❌ Error al procesar producto ${productId}:`, productError);
+                productsNotPurchasedIds.push(productId); // Añadir a no comprados si hay error
+            }
+        }
+        console.log(`📊 Verificación de stock completa. ${productsToPurchase.length} items con stock. ${productsNotPurchasedIds.length} items sin stock.`);
+
+        let newTicket = null;
+        // 2. Si hay productos para comprar, procesar la compra y generar ticket
+        if (productsToPurchase.length > 0) {
+            console.log(`💸 Procesando compra por un total de ${totalAmount}...`);
+            // 2.1. Actualizar stock de productos comprados
+            for (const item of productsToPurchase) {
+                try {
+                    await productService.updateProductStock(item.product, -item.quantity); // Restar stock
+                    console.log(`📉 Stock actualizado para producto ${item.product}.`);
+                } catch (stockError) {
+                    // ¡Importante! Manejar error aquí. ¿Qué hacer si falla la actualización de stock?
+                    // Podrías intentar revertir stocks anteriores, marcar el producto como no comprado, etc.
+                    console.error(`🔥 Error CRÍTICO al actualizar stock para ${item.product}:`, stockError);
+                    // Por simplicidad, lo añadimos a no comprados y continuamos, pero esto requiere una mejor gestión de transacciones.
+                    productsNotPurchasedIds.push(item.product);
+                    // Quizás removerlo de productsToPurchase y recalcular totalAmount?
+                }
+            }
+
+            // 2.2. Generar Ticket
+            const ticketData = {
+                code: uuidv4(), // Generar código único
+                purchase_datetime: new Date(),
+                amount: totalAmount,
+                purchaser: userEmail
+            };
+            try {
+                newTicket = await ticketService.createTicket(ticketData);
+                console.log(`🎫 Ticket creado con éxito: ${newTicket.code}`);
+
+                // Opcional: Enviar email de confirmación
+                // mailService.sendPurchaseConfirmation(userEmail, newTicket);
+
+            } catch (ticketError) {
+                console.error(`❌ Error al crear el ticket:`, ticketError);
+                // Aquí también se necesita manejo de errores. Si el ticket no se crea, ¿qué pasa con el stock?
+                return res.status(500).json({ status: 'error', message: 'Error al generar el ticket de compra' });
+            }
+
+            // 3. Actualizar carrito: Dejar solo los productos no comprados
+            console.log(`🧹 Actualizando carrito ${cid} para remover productos comprados...`);
+            try {
+                const remainingProducts = cart.products.filter(item => productsNotPurchasedIds.includes(item.product._id));
+                await cartService.updateCart(cid, remainingProducts.map(p => ({ product: p.product._id, quantity: p.quantity }))); // Guardar solo IDs y cantidad
+                console.log(`🛒 Carrito ${cid} actualizado. Quedan ${remainingProducts.length} items.`);
+            } catch (cartUpdateError) {
+                console.error(`⚠️ Error al actualizar el carrito ${cid} después de la compra:`, cartUpdateError);
+                // Loggear pero continuar, la compra se realizó.
+            }
+
+        } else {
+            console.log(`🤷 No hay productos con stock suficiente en el carrito ${cid}. No se generará ticket.`);
         }
 
-        // Limpiar el ID del carrito de la sesión
-        req.session.cartId = null;
-        console.log("🔑 ID de carrito eliminado de la sesión.");
-
-        // Renderizar la vista de checkout con los datos de la compra
-        res.render("checkout", {
-            title: "Compra Finalizada",
-            products: purchasedProducts,
-            totalPrice
+        // 4. Devolver respuesta
+        console.log(`✅ Proceso de compra para carrito ${cid} finalizado.`);
+        res.status(200).json({
+            status: 'success',
+            message: productsToPurchase.length > 0 ? 'Compra procesada' : 'No se pudieron comprar productos por falta de stock',
+            ticket: newTicket, // El ticket generado (o null si no se compró nada)
+            productsNotPurchased: productsNotPurchasedIds // Array de IDs de productos sin stock
         });
+
     } catch (error) {
-        console.error("❌ Error en checkoutCart:", error);
-        res.status(500).json({ status: "error", message: error.message });
+        console.error(`❌ Error general en purchaseCart para carrito ${req.params.cid}:`, error);
+        res.status(500).json({ status: 'error', message: 'Error interno del servidor durante la compra.' });
     }
 };
+
 
 export const getAllCarts = async (req, res) => {
     try {
