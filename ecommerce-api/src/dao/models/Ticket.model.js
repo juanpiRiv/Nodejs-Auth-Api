@@ -25,8 +25,14 @@ const ticketSchema = new mongoose.Schema({
         // type: mongoose.Schema.Types.ObjectId,
         // ref: 'users',
         // required: true
-    }
-    // Puedes añadir otros campos si los necesitas, como los productos comprados/no comprados,
+    },
+    products: [ // Agregar el array de productos
+        {
+            product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
+            quantity: { type: Number, required: true }
+        }
+    ]
+    // Puedes añadir otros campos si los necesitas, como los productos no comprados,
     // pero el requisito mínimo es este.
 });
 

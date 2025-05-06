@@ -6,6 +6,17 @@ class TicketService { // Renombrada la clase
     }
 
     // Puedes añadir otros métodos relacionados con tickets aquí
+    async getAllTickets() {
+        return await ticketManager.getAllTickets();
+    }
+
+    async getTicketById(ticketId) {
+        return await ticketManager.getTicketById(ticketId);
+    }
+
+    async getTicketByCode(ticketCode) {
+        return await ticketManager.getTicketByCode(ticketCode);
+    }
 }
 
 export default new TicketService(); // Renombrada la exportación

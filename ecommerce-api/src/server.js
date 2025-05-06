@@ -5,6 +5,7 @@ import productsRouter from './routes/product.routes.js';
 import cartsRouter from './routes/cart.routes.js';
 import usersRouter from './routes/user.routes.js';
 import sessionsRouter from './routes/session.routes.js';
+import ticketRouter from './routes/ticket.routes.js';
 import { engine } from 'express-handlebars';
 import path from 'path';
 import session from 'express-session';
@@ -45,6 +46,7 @@ app.use('/api/products', productsRouter);
 app.use('/api/carts', cartsRouter);
 app.use('/api/users', usersRouter); 
 app.use('/api/sessions', sessionsRouter);
+app.use('/api/tickets', ticketRouter);
 // app.use('/', viewsRouter); // Rutas de vistas 
 
 

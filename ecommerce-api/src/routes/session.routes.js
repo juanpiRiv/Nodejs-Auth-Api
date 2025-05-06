@@ -11,7 +11,7 @@ router.post('/login', login);
 router.post('/register', register);
 
 router.get('/current',
-  passport.authenticate('current',{session:false}),
+  passport.authenticate('jwt',{session:false}),
   (req,res) => {
     const dto = new UserDTO(req.user);
     res.json({status:'success', payload: dto});

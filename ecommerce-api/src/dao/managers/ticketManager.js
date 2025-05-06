@@ -8,6 +8,17 @@ class TicketManager { // Renombrada la clase
     }
 
     // Puedes añadir otros métodos relacionados con tickets aquí
+    async getAllTickets() {
+        return await ticketModel.find().lean();
+    }
+
+    async getTicketById(id) {
+        return await ticketModel.findById(id).lean();
+    }
+
+    async getTicketByCode(code) {
+        return await ticketModel.findOne({ code: code }).lean();
+    }
 }
 
 export default new TicketManager(); // Renombrada la exportación

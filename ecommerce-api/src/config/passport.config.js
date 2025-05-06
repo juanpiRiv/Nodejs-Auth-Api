@@ -70,7 +70,7 @@ const initializePassport = () => {
 
 
     // Estrategia current para extraer usuario del token
-    passport.use('current', new JwtStrategy(
+    passport.use('jwt', new JwtStrategy(
         {
             jwtFromRequest: ExtractJwt.fromExtractors([cookieExtractor]),
             secretOrKey: process.env.JWT_SECRET

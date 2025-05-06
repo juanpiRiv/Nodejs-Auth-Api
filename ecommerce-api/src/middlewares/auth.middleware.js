@@ -1,26 +1,17 @@
 import passport from 'passport';
 
-const isAuthenticated = (req, res, next) => {
-    passport.authenticate('current', { session: false }, (err, user, info) => {
-        if (err) {
-            return next(err);
-        }
-        if (!user) {
-            return res.status(401).json({ status: 'error', message: 'No autorizado' });
-        }
-        req.user = user;
-        next();
-    })(req, res, next);
-};
+// Middleware de autenticación
+export const isAuthenticated = passport.authenticate('jwt', { session: false });
 
 const isAdmin = (req, res, next) => {
+    // Se asume que 'isAuthenticated' ya pobló req.user
     if (req.user && req.user.role === 'admin') {
         return next();
     }
-    return res.status(403).json({ status: 'error', message: 'Acceso denegado' });
+    return res.status(403).json({ status: 'error', message: 'Acceso denegado. Se requiere rol de administrador.' });
 };
 
 export {
-    isAuthenticated,
+    // isAuthenticated ya está exportado arriba
     isAdmin
 };

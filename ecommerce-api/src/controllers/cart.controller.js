@@ -271,7 +271,11 @@ export const purchaseCart = async (req, res) => {
                 code: uuidv4(), // Generar código único
                 purchase_datetime: new Date(),
                 amount: totalAmount,
-                purchaser: userEmail
+                purchaser: userEmail,
+                products: productsToPurchase.map(item => ({ // Incluir productos comprados
+                    product: item.product,
+                    quantity: item.quantity
+                }))
             };
             try {
                 newTicket = await ticketService.createTicket(ticketData);
