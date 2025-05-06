@@ -7,9 +7,10 @@ import {
 } from '../controllers/cart.controller.js'; // Corregido nombre de archivo
 import authorize from '../middlewares/authorization.middleware.js';
 import passport from 'passport'; // Asumiendo que usas Passport
-
 // Middleware de autenticación (ajusta 'jwt' según tu estrategia)
-const authenticateJWT = passport.authenticate('jwt', { session: false });
+import { isAuthenticated } from '../middlewares/auth.middleware.js';
+
+const authenticateJWT = isAuthenticated;
 
 const router = express.Router();
 

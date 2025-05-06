@@ -30,7 +30,7 @@ export const createCart = async (req, res) => {
         req.session.cartId = newCart._id;
         console.log("✅ Carrito creado con ID:", newCart._id);
 
-        res.redirect(`/carts/${newCart._id}`);
+        res.status(201).json({ status: 'success', message: 'Carrito creado', cartId: newCart._id });
     } catch (error) {
         console.error("❌ Error en createCart:", error);
         res.status(500).json({ status: 'error', message: error.message });
@@ -194,7 +194,9 @@ export const purchaseCart = async (req, res) => {
         const { cid } = req.params;
         const userEmail = req.user.email; // Obtener email del usuario autenticado (asegúrate que Passport lo establece)
 
-        console.log(`🛒 Iniciando proceso de compra para carrito ${cid} por usuario ${userEmail}`);
+        console.log(`\n\n🛒 Iniciando proceso de compra para carrito ${cid} por usuario ${userEmail}`);
+        console.log("req.params:", req.params);
+        console.log("req.user:", req.user);
 
         const cart = await cartService.getCartById(cid);
 

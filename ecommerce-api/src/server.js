@@ -20,7 +20,7 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 
 app.use(session({
-    secret: 'miclavedeprueba',  // Cambia esto en producción
+    secret: 'miclavedeprueba',  // Cambia en producción
     resave: false,
     saveUninitialized: true,
     store: MongoStore.create({
@@ -43,9 +43,9 @@ app.use(cookieParser());
 // Rutas
 app.use('/api/products', productsRouter);
 app.use('/api/carts', cartsRouter);
-app.use('/api/users', usersRouter); // Usar la nueva ruta de usuarios
+app.use('/api/users', usersRouter); 
 app.use('/api/sessions', sessionsRouter);
-// app.use('/', viewsRouter); // Rutas de vistas (si las tienes)
+// app.use('/', viewsRouter); // Rutas de vistas 
 
 
 
