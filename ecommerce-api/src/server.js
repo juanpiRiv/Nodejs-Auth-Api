@@ -1,16 +1,18 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import productsRouter from './routes/product.routes.js'; // Corregido nombre
-import cartsRouter from './routes/cart.routes.js'; // Corregido nombre
-import viewsRouter from './routes/views.routes.js';
-import usersRouter from './routes/user.routes.js'; // Nueva ruta de usuarios
-import sessionsRouter from './routes/session.routes.js'; // Nueva ruta de sesiones
+import productsRouter from './routes/product.routes.js';
+import cartsRouter from './routes/cart.routes.js';
+import usersRouter from './routes/user.routes.js';
+import sessionsRouter from './routes/session.routes.js';
 import { engine } from 'express-handlebars';
 import path from 'path';
 import session from 'express-session';
-import methodOverride from 'method-override'; 
+import methodOverride from 'method-override';
 import MongoStore from 'connect-mongo';
+import cookieParser from 'cookie-parser';
+import passport from 'passport';
+import initializePassport from './config/passport.config.js';
 
 dotenv.config();
 
@@ -26,23 +28,9 @@ app.use(session({
         ttl: 3600 // Tiempo de vida de la sesión en segundos (1 hora)
     })
 }));
-// Registrar el helper "multiply" para Handlebars
-const hbs = engine({
-    runtimeOptions: {
-        allowProtoPropertiesByDefault: true,
-        allowProtoMethodsByDefault: true
-    },
-    helpers: {
-        multiply: (a, b) => a * b,
-        eq: (a, b) => a === b,  
-        json: (context) => JSON.stringify(context, null, 2)  
-    }
-});
-
-
-app.engine('handlebars', hbs);
-app.set('view engine', 'handlebars');
-app.set('views', path.resolve('src/views'));
+initializePassport();
+app.use(passport.initialize());
+app.use(passport.session());
 
 
 // Middlewares
@@ -50,13 +38,14 @@ app.use(express.static('public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
+app.use(cookieParser());
 
 // Rutas
 app.use('/api/products', productsRouter);
 app.use('/api/carts', cartsRouter);
 app.use('/api/users', usersRouter); // Usar la nueva ruta de usuarios
-app.use('/api/sessions', sessionsRouter); // Usar la nueva ruta de sesiones
-app.use('/', viewsRouter); // Rutas de vistas (si las tienes)
+app.use('/api/sessions', sessionsRouter);
+// app.use('/', viewsRouter); // Rutas de vistas (si las tienes)
 
 
 
