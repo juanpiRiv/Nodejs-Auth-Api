@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const ticketCollection = 'tickets'; // Nombre de la colección para tickets
+const ticketCollection = 'tickets'; // colección para tickets
 
 const ticketSchema = new mongoose.Schema({
     code: {
@@ -26,7 +26,7 @@ const ticketSchema = new mongoose.Schema({
         // ref: 'users',
         // required: true
     },
-    products: [ // Agregar el array de productos
+    products: [ 
         {
             product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
             quantity: { type: Number, required: true }

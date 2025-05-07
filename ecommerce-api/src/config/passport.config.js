@@ -21,7 +21,7 @@ const initializePassport = () => {
             passwordField: 'password'
         },
         async (email, password, done) => {
-            console.log('Login attempt:', { email, password }); // Agregar console.log
+            console.log('Login attempt:', { email, password }); // Para depuración
             if (!email || !password) {
                 return done(null, false, { message: 'Email y contraseña son obligatorios' });
             }
@@ -32,7 +32,7 @@ const initializePassport = () => {
                     return done(null, false, { message: 'Usuario no encontrado' });
                 }
 
-                const isMatch = bcrypt.compareSync(password, user.password); // validación directa
+                const isMatch = bcrypt.compareSync(password, user.password); // validación 
 
                 if (!isMatch) {
                     return done(null, false, { message: 'Contraseña incorrecta' });
@@ -60,7 +60,7 @@ const initializePassport = () => {
                     ...req.body
                 };
 
-                const { user } = await userService.registerUser(newUserData); // ✅ todo lo hace el service
+                const { user } = await userService.registerUser(newUserData); //  hace el service
                 return done(null, user);
             } catch (error) {
                 return done(error);

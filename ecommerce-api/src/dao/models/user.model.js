@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema({
     password: { type: String, required: true },
     cart: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'carts' // Referencia al modelo de carritos
+        ref: 'carts' 
     },
     role: {
         type: String,
@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema({
 });
 
 // Middleware pre-save para asociar un carrito nuevo si el usuario no tiene uno
-// (Esto puede variar según tu lógica de creación de carritos)
+//  varia según tu lógica de creación de carritos
 userSchema.pre('save', async function(next) {
     if (this.isNew && !this.cart) {
         // Lógica para crear un carrito nuevo y asignarlo
