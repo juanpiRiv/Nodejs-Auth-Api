@@ -4,7 +4,7 @@ import passport from 'passport';
 export const isAuthenticated = passport.authenticate('jwt', { session: false });
 
 const isAdmin = (req, res, next) => {
-    // Se asume que 'isAuthenticated' ya pobló req.user
+    //asume que 'isAuthenticated' req.user
     if (req.user && req.user.role === 'admin') {
         return next();
     }
@@ -12,6 +12,6 @@ const isAdmin = (req, res, next) => {
 };
 
 export {
-    // isAuthenticated ya está exportado arriba
+
     isAdmin
 };

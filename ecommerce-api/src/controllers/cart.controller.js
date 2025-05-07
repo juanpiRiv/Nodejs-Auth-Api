@@ -59,37 +59,32 @@ export const addProductSessionCart = async (req, res) => {
         console.log("🔍 Carrito antes de agregar productos:", JSON.stringify(cart, null, 2));
 
         // Validar que el producto exista y agregarlo
-        const product = await productService.getProductById(productId); // Obtener producto una sola vez
+        const product = await productService.getProductById(productId); 
         if (!product) {
             console.error("❌ Error: Producto no encontrado con ID:", productId);
-            return res.status(404).json({ status: "error", message: "Producto no encontrado" }); // Usar 404 Not Found
+            return res.status(404).json({ status: "error", message: "Producto no encontrado" }); 
         }
 
         // Agregar el producto al array en memoria
-        // TODO: REFACTOR POTENCIAL: Esta aproximación (modificar array y luego guardar todo)
-        // puede ser ineficiente para carritos grandes y propensa a condiciones de carrera si hay
-        // múltiples requests simultáneos. Una mejor solución sería tener un método en
-        // cartService/DAO como `addItemToCart(cartId, productId, quantity)` que encapsule
-        // la lógica de buscar el item, actualizar cantidad o añadirlo, directamente en la BD.
         cart.products.push({ product: product._id, quantity: Number(quantity) });
 
         // Guardar el carrito completo actualizado en la base de datos
         const updatedCart = await cartService.updateCart(cart._id, cart.products);
         if (!updatedCart) {
-             console.error(`❌ Error en addProductSessionCart: No se pudo actualizar el carrito ${cart._id} en la BD`);
-             return res.status(500).json({ status: "error", message: "Error interno al actualizar el carrito" });
+            console.error(`❌ Error en addProductSessionCart: No se pudo actualizar el carrito ${cart._id} en la BD`);
+            return res.status(500).json({ status: "error", message: "Error interno al actualizar el carrito" });
         }
 
         console.log(`✅ Producto ${productId} (x${quantity}) agregado al carrito ${cart._id} y guardado.`);
 
-        // Respuesta exitosa (podrías devolver el carrito actualizado)
+
         res.json({ status: "success", message: "Producto agregado al carrito de sesión", cartId: cart._id });
 
     } catch (error) {
         console.error("❌ Error en addProductSessionCart:", error);
         res.status(500).json({ status: "error", message: error.message });
     }
-}; // Cerrar addProductSessionCart
+}; 
 
 export const getCartById = async (req, res) => {
     try {
@@ -188,11 +183,10 @@ export const deleteCart = async (req, res) => {
     }
 };
 
-// Renombrado de checkoutCart a purchaseCart para reflejar la ruta /purchase
 export const purchaseCart = async (req, res) => {
     try {
         const { cid } = req.params;
-        const userEmail = req.user.email; // Obtener email del usuario autenticado (asegúrate que Passport lo establece)
+        const userEmail = req.user.email; // Obtener email del usuario autenticado
 
         console.log(`\n\n🛒 Iniciando proceso de compra para carrito ${cid} por usuario ${userEmail}`);
         console.log("req.params:", req.params);
@@ -257,12 +251,10 @@ export const purchaseCart = async (req, res) => {
                     await productService.updateProductStock(item.product, -item.quantity); // Restar stock
                     console.log(`📉 Stock actualizado para producto ${item.product}.`);
                 } catch (stockError) {
-                    // ¡Importante! Manejar error aquí. ¿Qué hacer si falla la actualización de stock?
-                    // Podrías intentar revertir stocks anteriores, marcar el producto como no comprado, etc.
+
                     console.error(`🔥 Error CRÍTICO al actualizar stock para ${item.product}:`, stockError);
                     // Por simplicidad, lo añadimos a no comprados y continuamos, pero esto requiere una mejor gestión de transacciones.
                     productsNotPurchasedIds.push(item.product);
-                    // Quizás removerlo de productsToPurchase y recalcular totalAmount?
                 }
             }
 
@@ -298,7 +290,7 @@ export const purchaseCart = async (req, res) => {
                 console.log(`🛒 Carrito ${cid} actualizado. Quedan ${remainingProducts.length} items.`);
             } catch (cartUpdateError) {
                 console.error(`⚠️ Error al actualizar el carrito ${cid} después de la compra:`, cartUpdateError);
-                // Loggear pero continuar, la compra se realizó.
+                
             }
 
         } else {
@@ -310,8 +302,8 @@ export const purchaseCart = async (req, res) => {
         res.status(200).json({
             status: 'success',
             message: productsToPurchase.length > 0 ? 'Compra procesada' : 'No se pudieron comprar productos por falta de stock',
-            ticket: newTicket, // El ticket generado (o null si no se compró nada)
-            productsNotPurchased: productsNotPurchasedIds // Array de IDs de productos sin stock
+            ticket: newTicket, 
+            productsNotPurchased: productsNotPurchasedIds 
         });
 
     } catch (error) {

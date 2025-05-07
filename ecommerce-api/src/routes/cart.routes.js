@@ -16,24 +16,19 @@ const router = express.Router();
 
 router.use(methodOverride('_method')); 
 
-// Rutas generales (podrían requerir autenticación básica)
-router.get('/', authenticateJWT, getAllCarts); // Ejemplo: Solo usuarios autenticados ven todos los carritos? (Ajustar según necesidad)
-router.post('/', authenticateJWT, createCart); // Ejemplo: Solo usuarios autenticados crean carritos?
-router.get('/:cid', authenticateJWT, getCartById); // Ejemplo: Solo usuarios autenticados ven su carrito?
+// Rutas generales 
+router.get('/', authenticateJWT, getAllCarts); //  Solo usuarios autenticados ven todos los carritos
+router.post('/', authenticateJWT, createCart); // Solo usuarios autenticados crean carritos
+router.get('/:cid', authenticateJWT, getCartById); //  Solo usuarios autenticados ven su carrito
 
-// Rutas para modificar carrito (requieren rol 'user')
+// Rutas para modificar carrito  rol 'user'
 router.post('/:cid/products/:pid', authenticateJWT, authorize('user'), addProductToCart);
-router.put('/:cid', authenticateJWT, authorize('user'), updateCart); // Actualizar carrito completo (quizás solo admin?) - REVISAR LÓGICA
+router.put('/:cid', authenticateJWT, authorize('user'), updateCart); 
 router.put('/:cid/products/:pid', authenticateJWT, authorize('user'), updateProductQuantity);
 router.delete('/:cid/products/:pid', authenticateJWT, authorize('user'), deleteProductFromCart);
-router.delete('/:cid', authenticateJWT, authorize('user'), deleteCart); // Eliminar carrito (quizás solo admin?) - REVISAR LÓGICA
+router.delete('/:cid', authenticateJWT, authorize('user'), deleteCart); 
 router.post('/add-product', authenticateJWT, authorize('user'), addProductSessionCart); // Añadir a carrito de sesión
 
-// Ruta de compra (requiere rol 'user') - Se implementará la lógica específica más adelante
-router.post('/:cid/purchase', authenticateJWT, authorize('user'), purchaseCart); // Renombrado de checkout a purchase
-// router.get('/:cid/checkout', checkoutCart); // Eliminada ruta GET para checkout/purchase, usar POST
-
-// Se elimina la ruta POST /:cid/checkout original ya que se reemplaza por /purchase
-// router.post('/:cid/checkout', checkoutCart);
+router.post('/:cid/purchase', authenticateJWT, authorize('user'), purchaseCart); 
 
 export default router;

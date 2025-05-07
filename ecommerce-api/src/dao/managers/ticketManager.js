@@ -1,13 +1,12 @@
-//cambiar nombre a ticketManager.js
 
-import ticketModel from '../models/ticket.model.js'; // Corregida la ruta y nombre del modelo
+import ticketModel from '../models/ticket.model.js'; // nombre del modelo
 
-class TicketManager { // Renombrada la clase
-    async createTicket(ticketData) { // Renombrado el método
+class TicketManager {
+    async createTicket(ticketData) { // Renombrado 
         return await ticketModel.create(ticketData); // Usar el modelo correcto
     }
 
-    // Puedes añadir otros métodos relacionados con tickets aquí
+    //  añadir otros métodos relacionados con tickets aquí
     async getAllTickets() {
         return await ticketModel.find().lean();
     }
