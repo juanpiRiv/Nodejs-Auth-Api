@@ -1,20 +1,21 @@
+import dotenv from 'dotenv';
+import path from 'path';
+import { __dirname } from './config/utils.js';
+dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 import express from 'express';
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
+
 import productsRouter from './routes/product.routes.js';
 import cartsRouter from './routes/cart.routes.js';
 import usersRouter from './routes/user.routes.js';
 import sessionsRouter from './routes/session.routes.js';
 import ticketRouter from './routes/ticket.routes.js';
-import path from 'path';
 import session from 'express-session';
 import methodOverride from 'method-override';
 import MongoStore from 'connect-mongo';
 import cookieParser from 'cookie-parser';
 import passport from 'passport';
 import initializePassport from './config/passport.config.js';
-
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 8080;

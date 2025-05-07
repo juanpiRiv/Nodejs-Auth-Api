@@ -3,6 +3,7 @@ import cartService from '../services/cart.service.js';
 import productService from '../services/product.service.js';
 import ticketService from '../services/ticket.service.js'; // Renombrado de orderService a ticketService
 import TicketDTO from '../dtos/ticket.dto.js'; // Importar TicketDTO
+import { sendPurchaseMessage } from '../services/twilio.service.js'; // Importar servicio de Twilio
 
 
 export const createCart = async (req, res) => {
@@ -273,6 +274,22 @@ export const purchaseCart = async (req, res) => {
             try {
                 newTicket = await ticketService.createTicket(ticketData);
                 console.log(`🎫 Ticket creado con éxito: ${newTicket.code}`);
+
+                // Enviar mensaje de Twilio (MODIFICACIÓN TEMPORAL PARA PRUEBAS)
+                const phoneNumberToSend = process.env.ADMIN_PHONE; // Usar ADMIN_PHONE para pruebas
+                // const phoneNumberToSend = req.user.phone; // Lógica original para enviar al comprador
+
+                if (phoneNumberToSend) { 
+                    try {
+                        await sendPurchaseMessage(phoneNumberToSend, newTicket);
+                        console.log(`📱 Mensaje de confirmación enviado a ${phoneNumberToSend} (usando ADMIN_PHONE para prueba).`);
+                    } catch (twilioError) {
+                        console.error(`❌ Error al enviar mensaje de Twilio a ${phoneNumberToSend}:`, twilioError);
+                        // No detener la compra por error de Twilio, solo loguear
+                    }
+                } else {
+                    console.log("📞 No se encontró teléfono del usuario (req.user.phone) ni ADMIN_PHONE configurado, no se envía mensaje de Twilio.");
+                }
 
                 // Opcional: Enviar email de confirmación
                 // mailService.sendPurchaseConfirmation(userEmail, newTicket);
