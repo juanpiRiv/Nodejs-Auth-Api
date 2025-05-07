@@ -20,6 +20,12 @@ class ProductDAO {
     async deleteProduct(id) {
         return await Product.findByIdAndDelete(id);
     }
+
+    async updateStock(id, quantityChange) {
+        // Utiliza $inc para incrementar/decrementar el stock.
+        // quantityChange será negativo para descontar stock.
+        return await Product.findByIdAndUpdate(id, { $inc: { stock: quantityChange } }, { new: true });
+    }
 }
 
 export default new ProductDAO();

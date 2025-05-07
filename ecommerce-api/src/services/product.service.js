@@ -26,12 +26,16 @@ class ProductService {
 
     // Añadida función placeholder para actualizar stock, necesaria para la compra
     async updateProductStock(id, quantityChange) {
-        // Implementar lógica para encontrar el producto por ID y actualizar su stock
-        // Esto probablemente llamaría a un método en productManager
-        console.log(`⚠️ Placeholder: Lógica para actualizar stock del producto ${id} en ${quantityChange} unidades.`);
-        // Ejemplo (necesita implementación real en productManager):
-        // return await productManager.updateStock(id, quantityChange);
-        return true; // Simula éxito por ahora
+        // Llama al método updateStock del productManager para actualizar el stock en la BDD.
+        // quantityChange será negativo si se está descontando stock (ej. -1, -2).
+        const updatedProduct = await productManager.updateStock(id, quantityChange);
+        if (!updatedProduct) {
+            // Podríamos lanzar un error más específico si es necesario.
+            console.error(`Error al actualizar stock para el producto ${id}. El producto podría no existir o hubo un error en la BD.`);
+            throw new Error(`No se pudo actualizar el stock para el producto ${id}.`);
+        }
+        console.log(`Stock actualizado para producto ${id}. Nuevo stock: ${updatedProduct.stock}`);
+        return updatedProduct;
     }
 }
 

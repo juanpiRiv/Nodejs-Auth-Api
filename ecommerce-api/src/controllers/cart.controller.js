@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from 'uuid'; // Para generar códigos únicos
 import cartService from '../services/cart.service.js';
 import productService from '../services/product.service.js';
 import ticketService from '../services/ticket.service.js'; // Renombrado de orderService a ticketService
+import TicketDTO from '../dtos/ticket.dto.js'; // Importar TicketDTO
 
 
 export const createCart = async (req, res) => {
@@ -302,7 +303,7 @@ export const purchaseCart = async (req, res) => {
         res.status(200).json({
             status: 'success',
             message: productsToPurchase.length > 0 ? 'Compra procesada' : 'No se pudieron comprar productos por falta de stock',
-            ticket: newTicket, 
+            ticket: newTicket ? new TicketDTO(newTicket) : null, // Usar TicketDTO si el ticket se creó
             productsNotPurchased: productsNotPurchasedIds 
         });
 
