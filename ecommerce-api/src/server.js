@@ -16,6 +16,7 @@ import MongoStore from 'connect-mongo';
 import cookieParser from 'cookie-parser';
 import passport from 'passport';
 import initializePassport from './config/passport.config.js';
+import errorHandler from './middlewares/errorHandler.middleware.js';
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -49,7 +50,8 @@ app.use('/api/sessions', sessionsRouter);
 app.use('/api/tickets', ticketRouter);
 // app.use('/', viewsRouter); // Rutas de vistas 
 
-
+// Middleware de manejo de errores global (debe ser el último)
+app.use(errorHandler);
 
 
 // Conexión a MongoDB
