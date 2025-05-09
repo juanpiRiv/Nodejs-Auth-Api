@@ -4,6 +4,7 @@ import productService from '../services/product.service.js';
 import ticketService from '../services/ticket.service.js'; // Renombrado de orderService a ticketService
 import TicketDTO from '../dtos/ticket.dto.js'; // Importar TicketDTO
 import { sendPurchaseMessage } from '../services/twilio.service.js'; // Importar servicio de Twilio
+import { sendPurchaseEmail } from "../services/email.service.js"; // Importar servicio de Email
 
 
 export const createCart = async (req, res) => {
@@ -293,6 +294,19 @@ export const purchaseCart = async (req, res) => {
 
                 // Opcional: Enviar email de confirmación
                 // mailService.sendPurchaseConfirmation(userEmail, newTicket);
+
+                // Enviar email de confirmación de compra
+                if (newTicket && req.user && req.user.email) {
+                    try {
+                        await sendPurchaseEmail(req.user.email, newTicket);
+                        console.log(`📧 Correo de confirmación de compra enviado a ${req.user.email}.`);
+                    } catch (emailError) {
+                        console.error(`❌ Error al enviar correo de confirmación a ${req.user.email}:`, emailError);
+                        // No detener la compra por error de email, solo loguear
+                    }
+                } else {
+                    console.log("📧 No se pudo enviar el correo: falta ticket, usuario o email del usuario.");
+                }
 
             } catch (ticketError) {
                 console.error(`❌ Error al crear el ticket:`, ticketError);
