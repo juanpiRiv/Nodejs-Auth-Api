@@ -1,7 +1,9 @@
 import express from 'express';
 import { getProducts, getProductById, addProduct, updateProduct, deleteProduct } from '../controllers/product.controller.js'; // Corregido nombre de archivo
 import authorize from '../middlewares/authorization.middleware.js';
-import passport from 'passport'; 
+import passport from 'passport';
+import { validateBody } from '../middlewares/validate.middleware.js';
+import { productSchema } from '../validations/product.validation.js';
 
 
 const authenticateJWT = passport.authenticate('jwt', { session: false });
@@ -13,8 +15,8 @@ router.get('/', getProducts);
 router.get('/:pid', getProductById); 
 
 // Rutas CRUD para administradores
-router.post('/', authenticateJWT, authorize('admin'), addProduct);
-router.put('/:pid', authenticateJWT, authorize('admin'), updateProduct);
+router.post('/', authenticateJWT, authorize('admin'), validateBody(productSchema), addProduct);
+router.put('/:pid', authenticateJWT, authorize('admin'), updateProduct); // Consider adding validation for update if needed
 router.delete('/:pid', authenticateJWT, authorize('admin'), deleteProduct);
 
 export default router;
