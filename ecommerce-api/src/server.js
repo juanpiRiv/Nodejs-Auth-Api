@@ -17,6 +17,8 @@ import cookieParser from 'cookie-parser';
 import passport from 'passport';
 import initializePassport from './config/passport.config.js';
 import errorHandler from './middlewares/errorHandler.middleware.js';
+import httpLogger from './middlewares/httpLogger.middleware.js';
+import notFoundHandler from './middlewares/notFoundHandler.middleware.js'; // Importar el notFoundHandler
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -41,6 +43,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 app.use(cookieParser());
+app.use(httpLogger); // Registrar el httpLogger ANTES de las rutas
 
 // Rutas
 app.use('/api/products', productsRouter);
@@ -48,7 +51,10 @@ app.use('/api/carts', cartsRouter);
 app.use('/api/users', usersRouter); 
 app.use('/api/sessions', sessionsRouter);
 app.use('/api/tickets', ticketRouter);
-// app.use('/', viewsRouter); // Rutas de vistas 
+// app.use('/', viewsRouter); // Rutas de vistas
+
+// Middleware para manejar rutas no encontradas (404)
+app.use(notFoundHandler);
 
 // Middleware de manejo de errores global (debe ser el último)
 app.use(errorHandler);
