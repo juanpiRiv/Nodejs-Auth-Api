@@ -162,7 +162,7 @@ Este proyecto está bajo la Licencia MIT. Consulta el archivo `LICENSE` para má
 ```text
 MIT License
 
-Copyright (c) [año] [nombre completo]
+Copyright (c) [2025] [JuanpiRiv]
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -182,15 +182,15 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
-(Reemplaza `[año]` y `[nombre completo]` con tus datos).
+ `[2025]` y `[Juan Pablo Rivero Albornoz]` .
 
 ## 📝 Contacto / Autor
 
-Desarrollado por **[Tu Nombre / Nombre de tu Equipo]**
+Desarrollado por **[JuanpiRiv]**
 
-*   GitHub: `[Tu Usuario de GitHub]`
-*   Email: `[Tu Email de Contacto]`
-*   LinkedIn: `[Tu Perfil de LinkedIn (Opcional)]`
+*   GitHub: `[https://github.com/juanpiRiv]`
+*   Email: `[juanpirivero015@gmail.com]`
+*   LinkedIn: `[https://www.linkedin.com/in/juanriveroalbornoz/]`
 
 ---
 
