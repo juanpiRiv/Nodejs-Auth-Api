@@ -1,4 +1,4 @@
-import Cart from '../models/cart.model.js'; // Corregida la ruta del modelo de carrito (ruta relativa correcta)
+import Cart from '../models/Cart.model.js'; // Corregida la ruta del modelo de carrito (ruta relativa correcta)
 
 class CartDAO {
     async createCart(cartData) {
