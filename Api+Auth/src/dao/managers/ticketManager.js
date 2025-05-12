@@ -1,5 +1,5 @@
 
-import ticketModel from '../models/ticket.model.js'; // nombre del modelo
+import ticketModel from '../models/Ticket.model.js'; // nombre del modelo
 
 class TicketManager {
     async createTicket(ticketData) { // Renombrado 
