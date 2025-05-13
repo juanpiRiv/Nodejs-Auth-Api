@@ -11,7 +11,7 @@ Sigue estos pasos para levantar el proyecto en tu entorno local:
     git clone https://github.com/juanpiRiv/Nodejs-Auth-Api
     cd Api+Auth
     ```
-    (Reemplaza `https://github.com/juanpiRiv/Nodejs-Auth-Api` y `Api+Auth` con los valores correctos. El directorio del proyecto parece ser `ecommerce-api` según la estructura de archivos.)
+
 
 2.  **Instalar dependencias:**
     Asegúrate de tener Node.js y npm instalados. Luego, ejecuta:
