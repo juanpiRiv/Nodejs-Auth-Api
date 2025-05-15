@@ -1,3 +1,4 @@
+import Cart from '../dao/models/Cart.model.js';
 class CartRepository {
   constructor(cartModel) {
     this.model = cartModel;
@@ -15,4 +16,5 @@ class CartRepository {
     return this.model.findByIdAndDelete(id);
   }
 }
-module.exports = new CartRepository(require('../dao/models/cart.model'));
+
+export default new CartRepository(Cart);

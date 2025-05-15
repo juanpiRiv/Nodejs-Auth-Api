@@ -1,3 +1,4 @@
+import Ticket from '../dao/models/Ticket.model.js';
 class TicketRepository {
   constructor(ticketModel) {
     this.model = ticketModel;
@@ -15,4 +16,5 @@ class TicketRepository {
     return this.model.findByIdAndDelete(id);
   }
 }
-module.exports = new TicketRepository(require('../dao/models/ticket.model'));
+
+export default new TicketRepository(Ticket);

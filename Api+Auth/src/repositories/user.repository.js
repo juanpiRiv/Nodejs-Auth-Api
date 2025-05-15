@@ -1,3 +1,4 @@
+import User from '../dao/models/user.model.js';
 class UserRepository {
   constructor(userModel) {
     this.model = userModel;
@@ -15,4 +16,5 @@ class UserRepository {
     return this.model.findByIdAndDelete(id);
   }
 }
-module.exports = new UserRepository(require('../dao/models/user.model'));
+
+export default new UserRepository(User);

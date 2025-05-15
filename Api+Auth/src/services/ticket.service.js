@@ -1,21 +1,21 @@
-import ticketManager from '../dao/managers/ticketManager.js';
+import ticketRepository from '../repositories/ticket.repository.js';
 
-class TicketService { // Renombrada la clase
-    async createTicket(ticketData) { // Renombrado el método para crear ticket
-        return await ticketManager.createTicket(ticketData); // Usar el manager de ticket
+class TicketService {
+    async createTicket(ticketData) {
+        return await ticketRepository.create(ticketData);
     }
 
     async getAllTickets() {
-        return await ticketManager.getAllTickets();
+        return await ticketRepository.model.find();
     }
 
     async getTicketById(ticketId) {
-        return await ticketManager.getTicketById(ticketId);
+        return await ticketRepository.findById(ticketId);
     }
 
     async getTicketByCode(ticketCode) {
-        return await ticketManager.getTicketByCode(ticketCode);
+        return await ticketRepository.model.findOne({ code: ticketCode });
     }
 }
 
-export default new TicketService(); // Renombrada la exportación
+export default new TicketService();

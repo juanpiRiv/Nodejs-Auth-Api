@@ -1,41 +1,78 @@
-import productManager from '../dao/managers/productManager.js'; // Corregida la ruta y nombre del manager de producto
+import productRepository from '../repositories/product.repository.js';
+import mongoose from 'mongoose';
+// import { ApiError } from '../utils/api.utils.js';
 
 class ProductService {
     async getProducts(filter, options) {
-        return await productManager.getProducts(filter, options);
+        return await productRepository.model.paginate(filter, options);
     }
 
     async getProductById(id) {
-        return await productManager.getProductById(id);
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            throw new ApiError('ID inválido', 400);
+        }
+        const product = await productRepository.findById(id);
+        if (!product) {
+            throw new ApiError('Producto no encontrado', 404);
+        }
+        return product;
     }
 
     async addProduct(productData) {
-        // Aquí iría la lógica de negocio, por ejemplo, validaciones
-        return await productManager.addProduct(productData);
+        if (typeof productData.price !== 'number' || productData.price <= 0) {
+            throw new ApiError('El precio debe ser un número positivo', 400);
+        }
+        if (typeof productData.stock !== 'number' || productData.stock < 0) {
+            throw new ApiError('El stock debe ser un número positivo', 400);
+        }
+        const existingProduct = await productRepository.model.findOne({ code: productData.code });
+        if (existingProduct) {
+            throw new ApiError('El código del producto ya existe', 400);
+        }
+        return await productRepository.create(productData);
     }
 
     async updateProduct(id, productData) {
-        // Aquí iría la lógica de negocio, por ejemplo, validaciones
-        return await productManager.updateProduct(id, productData);
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            throw new ApiError('ID inválido', 400);
+        }
+        const product = await productRepository.findById(id);
+        if (!product) {
+            throw new ApiError('Producto no encontrado', 404);
+        }
+        if (productData.code) {
+            const existingProduct = await productRepository.model.findOne({ code: productData.code });
+            if (existingProduct && existingProduct._id.toString() !== id) {
+                throw new ApiError('El código del producto ya existe', 400);
+            }
+        }
+         if (productData.price && (typeof productData.price !== 'number' || productData.price <= 0)) {
+            throw new ApiError('El precio debe ser un número positivo', 400);
+        }
+        if (productData.stock && (typeof productData.stock !== 'number' || productData.stock < 0)) {
+            throw new ApiError('El stock debe ser un número positivo', 400);
+        }
+        return await productRepository.update(id, productData);
     }
 
     async deleteProduct(id) {
-        // Aquí iría la lógica de negocio, por ejemplo, validaciones
-        return await productManager.deleteProduct(id);
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            throw new ApiError('ID inválido', 400);
+        }
+        const product = await productRepository.findById(id);
+        if (!product) {
+            throw new ApiError('Producto no encontrado', 404);
+        }
+        return await productRepository.delete(id);
     }
 
-    // Añadida función placeholder para actualizar stock, necesaria para la compra
     async updateProductStock(id, quantityChange) {
-        // Llama al método updateStock del productManager para actualizar el stock en la BDD.
-        // quantityChange será negativo si se está descontando stock (ej. -1, -2).
-        const updatedProduct = await productManager.updateStock(id, quantityChange);
-        if (!updatedProduct) {
-            // Podríamos lanzar un error más específico si es necesario.
-            console.error(`Error al actualizar stock para el producto ${id}. El producto podría no existir o hubo un error en la BD.`);
-            throw new Error(`No se pudo actualizar el stock para el producto ${id}.`);
+        const product = await productRepository.findById(id);
+         if (!product) {
+            throw new ApiError('Producto no encontrado', 404);
         }
-        console.log(`Stock actualizado para producto ${id}. Nuevo stock: ${updatedProduct.stock}`);
-        return updatedProduct;
+        product.stock += quantityChange;
+        return await productRepository.update(id, { stock: product.stock });
     }
 }
 

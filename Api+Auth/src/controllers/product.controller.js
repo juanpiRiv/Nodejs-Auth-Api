@@ -1,4 +1,6 @@
-import productService from '../services/product.service.js'; // Importar el servicio
+import productService from '../services/product.service.js';
+import { productSchema } from '../validations/product.validation.js';
+import { validateBody } from '../middlewares/validate.middleware.js';
 
 export const getProducts = async (req, res) => {
     try {
@@ -20,7 +22,7 @@ export const getProducts = async (req, res) => {
 
         const options = { page, limit, sort: sortOption, lean: true };
 
-        const result = await productService.getProducts(filter, options); // Usar el servicio
+        const result = await productService.getProducts(filter, options);
 
         res.json({
             status: "success",
@@ -32,7 +34,7 @@ export const getProducts = async (req, res) => {
             hasPrevPage: result.hasPrevPage,
             hasNextPage: result.hasNextPage,
             prevLink: result.hasPrevPage ? `/api/products?page=${result.prevPage}&limit=${limit}&sort=${sort}&search=${search}&category=${category}` : null,
-            nextLink: result.hasNextPage ? `/api/products?page=${result.nextPage}&limit=${limit}&sort=${sort}&search=${search}&category=${category}` : null,
+            nextLink: result.hasNextPage ? `/api/products?page=${result.nextPage}&limit=${limit}&sort=${sort}&search=${search}&category}` : null,
         });
     } catch (error) {
         console.error("Error al cargar los productos:", error);
@@ -42,7 +44,7 @@ export const getProducts = async (req, res) => {
 
 export const getProductById = async (req, res) => {
     try {
-        const product = await productService.getProductById(req.params.pid); // Usar el servicio
+        const product = await productService.getProductById(req.params.pid);
         if (!product) return res.status(404).json({ status: "error", message: "Producto no encontrado" });
         res.json({ status: "success", product });
     } catch (error) {
@@ -52,7 +54,7 @@ export const getProductById = async (req, res) => {
 
 export const addProduct = async (req, res) => {
     try {
-        const product = await productService.addProduct(req.body); // Usar el servicio
+        const product = await productService.addProduct(req.body);
         res.status(201).json({ status: "success", product });
     } catch (error) {
         res.status(400).json({ status: "error", message: error.message });
@@ -61,7 +63,7 @@ export const addProduct = async (req, res) => {
 
 export const updateProduct = async (req, res) => {
     try {
-        const updatedProduct = await productService.updateProduct(req.params.pid, req.body); // Usar el servicio
+        const updatedProduct = await productService.updateProduct(req.params.pid, req.body);
         if (!updatedProduct) return res.status(404).json({ status: "error", message: "Producto no encontrado" });
         res.json({ status: "success", product: updatedProduct });
     } catch (error) {
@@ -71,7 +73,7 @@ export const updateProduct = async (req, res) => {
 
 export const deleteProduct = async (req, res) => {
     try {
-        await productService.deleteProduct(req.params.pid); // Usar el servicio
+        await productService.deleteProduct(req.params.pid);
         res.status(204).send();
     } catch (error) {
         res.status(500).json({ status: "error", message: error.message });

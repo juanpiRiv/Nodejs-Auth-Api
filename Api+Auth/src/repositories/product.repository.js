@@ -1,3 +1,4 @@
+import Product from '../dao/models/Product.model.js';
 class ProductRepository {
   constructor(productModel) {
     this.model = productModel;
@@ -15,4 +16,4 @@ class ProductRepository {
     return this.model.findByIdAndDelete(id);
   }
 }
-module.exports = new ProductRepository(require('../dao/models/Product.model'));
+export default new ProductRepository(Product);
