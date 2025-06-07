@@ -19,17 +19,14 @@ const userSchema = new mongoose.Schema({
     }
 });
 
-// Middleware pre-save para asociar un carrito nuevo si el usuario no tiene uno
-//  varia según tu lógica de creación de carritos
 userSchema.pre('save', async function(next) {
     if (this.isNew && !this.cart) {
-        // Lógica para crear un carrito nuevo y asignarlo
-        // const newCart = await cartManager.createCart(); // Ejemplo
-        // this.cart = newCart._id;
+        const cartRepository = require('../../repositories/cart.repository').default;
+        const newCart = await cartRepository.create({});
+        this.cart = newCart._id;
     }
     next();
 });
-
 
 const userModel = mongoose.model(userCollection, userSchema);
 
