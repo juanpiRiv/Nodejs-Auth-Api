@@ -22,7 +22,7 @@ import notFoundHandler from './middlewares/notFoundHandler.middleware.js'; // Im
 
 const app = express();
 const PORT = process.env.PORT || 8080;
-
+// Configuración de la sesión con MongoDB
 app.use(session({
     secret: 'miclavedeprueba',  // Cambia en producción
     resave: false,
