@@ -62,20 +62,18 @@ export const addProductSessionCart = async (req, res) => {
         console.log("🔍 Carrito antes de agregar productos:", JSON.stringify(cart, null, 2));
 
         // Validar que el producto exista y agregarlo
-        const product = await productService.getProductById(productId); 
+        const product = await productService.getProductById(productId);
         if (!product) {
             console.error("❌ Error: Producto no encontrado con ID:", productId);
-            return res.status(404).json({ status: "error", message: "Producto no encontrado" }); 
+            return res.status(404).json({ status: "error", message: "Producto no encontrado" });
         }
 
-        // Agregar el producto al array en memoria
-        cart.products.push({ product: product._id, quantity: Number(quantity) });
-
-        // Guardar el carrito completo actualizado en la base de datos
-        const updatedCart = await cartService.updateCart(cart._id, cart.products);
-        if (!updatedCart) {
-            console.error(`❌ Error en addProductSessionCart: No se pudo actualizar el carrito ${cart._id} en la BD`);
-            return res.status(500).json({ status: "error", message: "Error interno al actualizar el carrito" });
+        // Agregar el producto al carrito directamente en la base de datos
+        try {
+            await cartService.addProductToCart(cart._id, product._id, Number(quantity));
+        } catch (error) {
+            console.error(`❌ Error en addProductSessionCart: No se pudo agregar el producto ${productId} al carrito ${cart._id} en la BD`);
+            return res.status(500).json({ status: "error", message: "Error interno al agregar el producto al carrito" });
         }
 
         console.log(`✅ Producto ${productId} (x${quantity}) agregado al carrito ${cart._id} y guardado.`);

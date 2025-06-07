@@ -1,7 +1,6 @@
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
-import userManager from '../dao/managers/userManager.js';
 import userService from '../services/user.service.js';
 import bcrypt from 'bcrypt';
 
@@ -9,7 +8,7 @@ import bcrypt from 'bcrypt';
 const cookieExtractor = (req) => {
     let token = null;
     if (req && req.cookies) {
-        token = req.cookies[process.env.JWT_COOKIE_NAME];
+        token = req.cookies['authToken'];
     }
     return token;
 };
@@ -26,19 +25,13 @@ const initializePassport = () => {
                 return done(null, false, { message: 'Email y contraseña son obligatorios' });
             }
             try {
-                const user = await userManager.getUserByEmail(email);
+                const result = await userService.loginUser(email, password);
 
-                if (!user) {
+                if (!result) {
                     return done(null, false, { message: 'Usuario no encontrado' });
                 }
 
-                const isMatch = bcrypt.compareSync(password, user.password); // validación 
-
-                if (!isMatch) {
-                    return done(null, false, { message: 'Contraseña incorrecta' });
-                }
-
-                return done(null, user);
+                return done(null, result.user);
             } catch (error) {
                 return done(error);
             }
@@ -77,7 +70,7 @@ const initializePassport = () => {
         },
         async (jwt_payload, done) => {
             try {
-                const user = await userManager.getUserById(jwt_payload.sub);
+                const user = await userService.getCurrentUser(jwt_payload.sub);
                 if (!user) {
                     return done(null, false, { message: 'Usuario no encontrado' });
                 }

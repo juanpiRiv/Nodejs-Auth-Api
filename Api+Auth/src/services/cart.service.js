@@ -10,26 +10,31 @@ class CartService {
     }
 
     async addProductToCart(cid, pid, quantity) {
-        const cart = await cartRepository.findById(cid);
-        cart.products.push({ product: pid, quantity });
-        return await cartRepository.update(cid, cart);
+        return await cartRepository.model.findByIdAndUpdate(
+            cid,
+            { $push: { products: { product: pid, quantity } } },
+            { new: true }
+        );
     }
 
     async updateCart(cid, products) {
-        return await cartRepository.update(cid, products);
+        return await cartRepository.model.findByIdAndUpdate(cid, { products }, { new: true });
     }
 
     async updateProductQuantity(cid, pid, quantity) {
-        const cart = await cartRepository.findById(cid);
-        const productIndex = cart.products.findIndex(p => p.product.toString() === pid);
-        cart.products[productIndex].quantity = quantity;
-        return await cartRepository.update(cid, cart);
+        return await cartRepository.model.findOneAndUpdate(
+            { _id: cid, "products.product": pid },
+            { $set: { "products.$.quantity": quantity } },
+            { new: true }
+        );
     }
 
     async deleteProductFromCart(cid, pid) {
-        const cart = await cartRepository.findById(cid);
-        cart.products = cart.products.filter(p => p.product.toString() !== pid);
-        return await cartRepository.update(cid, cart);
+        return await cartRepository.model.findByIdAndUpdate(
+            cid,
+            { $pull: { products: { product: pid } } },
+            { new: true }
+        );
     }
 
     async deleteCart(cid) {

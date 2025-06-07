@@ -1,7 +1,6 @@
-// src/controllers/ticket.controller.js
+import { v4 as uuidv4 } from 'uuid';
 import ticketService from '../services/ticket.service.js';
 import TicketDTO from '../dtos/ticket.dto.js';
-
 export const getTickets = async (req, res) => {
   try {
     const tickets = await ticketService.getAllTickets();
@@ -12,30 +11,16 @@ export const getTickets = async (req, res) => {
   }
 };
 
-// Controlador para crear un nuevo ticket
 export const createTicket = async (req, res) => {
-  try {
-    // Aquí iría la lógica para crear el ticket usando ticketService
-    // Por ejemplo: const newTicketData = req.body;
-    // const createdTicket = await ticketService.createTicket(newTicketData, req.user.email); // Asumiendo que el servicio lo maneja
-
-    // Placeholder mientras se implementa la lógica completa:
-    const newTicketData = req.body; // Los datos ya validados por Joi
-    // Simulación de creación
-    const simulatedTicket = {
-      ...newTicketData,
-      code: `TICKET-${Date.now()}`, // Generar un código único simple
-      purchase_datetime: new Date(),
-      // purchaser: req.user.email, // El purchaser ya viene en el body y fue validado
-    };
-
-    // Devolver el ticket simulado o un DTO
-    res.status(201).json({ status: 'success', message: 'Ticket creado (simulado)', ticket: new TicketDTO(simulatedTicket) });
-
-  } catch (error) {
-    console.error('Error al crear ticket:', error);
-    res.status(500).json({ status: 'error', message: 'Error interno al crear el ticket: ' + error.message });
-  }
+    try {
+        const newTicketData = req.body;
+        newTicketData.code = uuidv4();
+        const createdTicket = await ticketService.createTicket(newTicketData);
+        res.status(201).json({ status: 'success', message: 'Ticket creado', ticket: new TicketDTO(createdTicket) });
+    } catch (error) {
+        console.error('Error al crear ticket:', error);
+        res.status(500).json({ status: 'error', message: 'Error interno al crear el ticket: ' + error.message });
+    }
 };
 
 export const getTicketByCode = async (req, res) => {

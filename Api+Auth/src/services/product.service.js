@@ -66,13 +66,16 @@ class ProductService {
         return await productRepository.delete(id);
     }
 
-    async updateProductStock(id, quantityChange) {
-        const product = await productRepository.findById(id);
-         if (!product) {
+   async updateProductStock(id, quantityChange) {
+        const updatedProduct = await productRepository.model.findByIdAndUpdate(
+            id,
+            { $inc: { stock: quantityChange } },
+            { new: true }
+        );
+        if (!updatedProduct) {
             throw new ApiError('Producto no encontrado', 404);
         }
-        product.stock += quantityChange;
-        return await productRepository.update(id, { stock: product.stock });
+        return updatedProduct;
     }
 }
 
