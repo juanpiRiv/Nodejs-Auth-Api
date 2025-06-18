@@ -19,9 +19,25 @@ import initializePassport from './config/passport.config.js';
 import errorHandler from './middlewares/errorHandler.middleware.js';
 import httpLogger from './middlewares/httpLogger.middleware.js';
 import notFoundHandler from './middlewares/notFoundHandler.middleware.js'; // Importar el notFoundHandler
+import swaggerUi from 'swagger-ui-express';
+import swaggerJsdoc from 'swagger-jsdoc';
 
 const app = express();
 const PORT = process.env.PORT || 8080;
+
+const options = {
+    definition: {
+        openapi: '3.0.1',
+        info: {
+            title: 'Documentación de la API',
+            version: '1.0.0',
+            description: 'Documentación de la API del proyecto'
+        },
+    },
+    apis: ['./src/routes/*.js'], // Rutas a los archivos de las rutas
+};
+
+const specs = swaggerJsdoc(options);
 
 app.use(session({
     secret: 'miclavedeprueba',  // Cambia en producción
@@ -44,6 +60,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 app.use(cookieParser());
 app.use(httpLogger); // Registrar el httpLogger ANTES de las rutas
+
+// Swagger route
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(specs));
 
 // Rutas
 app.use('/api/products', productsRouter);
@@ -72,12 +91,11 @@ const connectDB = async () => {
 };
 
 
-
-
-
 // Iniciar 
 connectDB().then(() => {
     app.listen(PORT, () => {
         console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
-    });
 });
+});
+
+export default app;

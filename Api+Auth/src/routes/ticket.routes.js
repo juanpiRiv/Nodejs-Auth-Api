@@ -11,14 +11,110 @@ const router = express.Router();
 
 const authenticateJWT = isAuthenticated;
 
-// Ruta para crear un nuevo ticket (ej. después de una compra exitosa, o para testing)
-// La autorización podría ser 'user' si un usuario puede generar su propio ticket,
-// o podría no tener autorización específica si se llama internamente.
-// Por ahora, la dejaré con autenticación básica.
+/**
+ * @openapi
+ * /api/tickets:
+ *   post:
+ *     summary: Crear un nuevo ticket
+ *     tags:
+ *       - Tickets
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Ticket'
+ *     responses:
+ *       201:
+ *         description: Ticket creado con éxito
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Ticket'
+ *       400:
+ *         description: Error al crear el ticket
+ */
 router.post('/', authenticateJWT, validateBody(ticketSchema), createTicket);
 
+/**
+ * @openapi
+ * /api/tickets:
+ *   get:
+ *     summary: Obtener todos los tickets (Solo Admin)
+ *     tags:
+ *       - Tickets
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista de tickets obtenida con éxito
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Ticket'
+ *       401:
+ *         description: No autorizado
+ */
 router.get('/', authenticateJWT, authorize('admin'), getTickets); // solo admin
+
+/**
+ * @openapi
+ * /api/tickets/{tid}:
+ *   get:
+ *     summary: Obtener un ticket por ID
+ *     tags:
+ *       - Tickets
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: tid
+ *         required: true
+ *         description: ID del ticket a obtener
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Ticket obtenido con éxito
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Ticket'
+ *       404:
+ *         description: Ticket no encontrado
+ */
 router.get('/:tid', authenticateJWT, getTicketById); // usuario dueño o admin
+
+/**
+ * @openapi
+ * /api/tickets/by-code/{code}:
+ *   get:
+ *     summary: Obtener un ticket por código
+ *     tags:
+ *       - Tickets
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: code
+ *         required: true
+ *         description: Código del ticket a obtener
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Ticket obtenido con éxito
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Ticket'
+ *       404:
+ *         description: Ticket no encontrado
+ */
 router.get('/by-code/:code', authenticateJWT, getTicketByCode); // buscar por code
 
 export default router;

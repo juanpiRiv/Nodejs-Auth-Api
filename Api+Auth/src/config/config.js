@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export const config = {
+    MONGO_TESTURI: process.env.MONGO_TESTURI,
     MONGO_URI: process.env.MONGO_URI, 
     PORT: process.env.PORT,
     jwtSecret: process.env.JWT_SECRET,

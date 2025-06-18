@@ -109,6 +109,9 @@ export const addProductToCart = async (req, res) => {
 
         res.json({ status: "success", cart });
     } catch (error) {
+        if (error.message === 'Product not found') {
+            return res.status(404).json({ status: 'error', message: 'Producto no encontrado' });
+        }
         res.status(500).json({ status: "error", message: error.message });
     }
 };
@@ -156,17 +159,7 @@ export const updateProductQuantity = async (req, res) => {
     }
 };
 
-export const deleteProductFromCart = async (req, res) => {
-    const { cid, pid } = req.params;
-    try {
-        const cart = await cartService.deleteProductFromCart(cid, pid);
-        if (!cart) return res.status(404).json({ message: "Carrito no encontrado" });
 
-        res.json({ message: "Producto eliminado del carrito", cart });
-    } catch (error) {
-        res.status(500).json({ message: "Error en el servidor", error });
-    }
-};
 
 
 export const deleteCart = async (req, res) => {
@@ -332,8 +325,10 @@ export const purchaseCart = async (req, res) => {
         res.status(200).json({
             status: 'success',
             message: productsToPurchase.length > 0 ? 'Compra procesada' : 'No se pudieron comprar productos por falta de stock',
-            ticket: newTicket ? new TicketDTO(newTicket) : null, // Usar TicketDTO si el ticket se creó
-            productsNotPurchased: productsNotPurchasedIds 
+            payload: {
+                ticket: newTicket ? {_id: newTicket._id, code: newTicket.code, purchase_datetime: newTicket.purchase_datetime, amount: newTicket.amount, purchaser: newTicket.purchaser, products: newTicket.products} : null, // Usar TicketDTO si el ticket se creó
+                productsNotPurchased: productsNotPurchasedIds
+            }
         });
 
     } catch (error) {
@@ -349,5 +344,23 @@ export const getAllCarts = async (req, res) => {
         res.json({ status: "success", carts });
     } catch (error) {
         res.status(500).json({ status: "error", message: error.message });
+    }
+};
+
+export const deleteProductFromCart = async (req, res) => {
+    const { cid, pid } = req.params;
+    try {
+        const cart = await cartService.getCartById(cid);
+        if (!cart) return res.status(404).json({ message: "Carrito no encontrado" });
+
+        const productIndex = cart.products.findIndex(p => p.product.toString() === pid);
+        if (productIndex === -1) {
+            return res.status(404).json({ status: 'error', message: 'Producto no encontrado en el carrito' });
+        }
+
+        const updatedCart = await cartService.deleteProductFromCart(cid, pid);
+        res.json({ status: 'success', message: 'Producto eliminado del carrito', cart: updatedCart });
+    } catch (error) {
+        res.status(500).json({ status: 'error', message: error.message });
     }
 };
