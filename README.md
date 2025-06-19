@@ -95,8 +95,10 @@ ecommerce-api/
 │   ├── utils/          # Funciones de utilidad (manejo de JWT, encriptación, etc.)
 │   ├── validations/    # Esquemas de validación (Joi) para los datos de entrada
 │   └── server.js       # Archivo principal de inicio del servidor Express
-├── .env                # Archivo de variables de entorno (NO subir a Git)
-├── .gitignore          # Archivos y carpetas ignorados por Git
+├── .env                # Archivo de variables de entorno (NO subir a Git, incluir en Docker)
+├── .dockerignore       # Archivos y carpetas ignorados por Docker (no incluir en Git)
+├── .gitignore          # Archivos y carpetas ignorados por Git (no incluir en Docker)
+├── Dockerfile          # Imagen Docker para ejecución en entornos de producción
 ├── package-lock.json   # Dependencias bloqueadas
 ├── package.json        # Metadatos del proyecto y dependencias
 └── README.md           # Este archivo
