@@ -168,7 +168,7 @@
 							"port": "8080",
 							"path": [
 								"api",
-								"cart"
+								"carts"
 							]
 						}
 					},
