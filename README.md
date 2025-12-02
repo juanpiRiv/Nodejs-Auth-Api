@@ -1,10 +1,15 @@
 # Proyecto E-commerce API
 
-API backend robusta y profesional para una plataforma de e-commerce, desarrollada con Node.js, Express y MongoDB. Incluye autenticación, autorización por roles, gestión de carrito de compras, sistema de tickets y más.
+API backend robusta y profesional para una plataforma de e-commerce, desarrollada con Node.js, Express y MongoDB. Incluye:
+- Autenticación
+- Autorización por roles
+- Gestión de carrito de compras
+- Sistema de tickets
+- Y más funcionalidades.
 
 ## 📦 Instalación
 
-Sigue estos pasos para levantar el proyecto en tu entorno local:
+Sigue estos pasos para ejecutar el proyecto localmente:
 
 1.  **Clonar el repositorio:**
     ```bash
@@ -90,27 +95,29 @@ ecommerce-api/
 │   ├── utils/          # Funciones de utilidad (manejo de JWT, encriptación, etc.)
 │   ├── validations/    # Esquemas de validación (Joi) para los datos de entrada
 │   └── server.js       # Archivo principal de inicio del servidor Express
-├── .env                # Archivo de variables de entorno (NO subir a Git)
-├── .gitignore          # Archivos y carpetas ignorados por Git
+├── .env                # Archivo de variables de entorno (NO subir a Git, incluir en Docker)
+├── .dockerignore       # Archivos y carpetas ignorados por Docker (no incluir en Git)
+├── .gitignore          # Archivos y carpetas ignorados por Git (no incluir en Docker)
+├── Dockerfile          # Imagen Docker para ejecución en entornos de producción
 ├── package-lock.json   # Dependencias bloqueadas
 ├── package.json        # Metadatos del proyecto y dependencias
 └── README.md           # Este archivo
 ```
 
-## 🧪 Uso de la Colección Postman
+## 🧪 Uso de la colección Postman
 
-Se proporciona una colección de Postman (`Auth+Api.postman_collection.json`) con todos los endpoints listos para ser probados.
+Se proporciona una colección de Postman (`Auth+Api.postman_collectionv2.json`) con todos los endpoints listos para ser probados.
 
 **Cómo importar y usar:**
 
 1.  Abre Postman.
 2.  Haz clic en `Import` (generalmente en la esquina superior izquierda).
 3.  Selecciona la pestaña `File` y luego `Upload Files`.
-4.  Navega hasta el archivo `Auth+Api.postman_collection.json` en la raíz del proyecto y selecciónalo.
+4.  Navega hasta el archivo `Auth+Api.postman_collectionv2.json` en la raíz del proyecto y selecciónalo.
 5.  Una vez importada, encontrarás la colección en el panel lateral de Postman.
 6.  **Importante:** Algunos endpoints requieren autenticación (JWT). Generalmente, después de hacer login (`POST /api/sessions/login`), el token JWT se guarda automáticamente en una cookie (`authToken`) que Postman debería enviar en las solicitudes subsiguientes. Si no, asegúrate de configurar Postman para que envíe cookies o incluye el token manualmente en el header `Authorization` como `Bearer TU_TOKEN_AQUI` si la API está configurada para aceptarlo así también. Revisa la configuración de autenticación de cada request en Postman.
 
-## 🛠 Principales Endpoints (Ejemplos)
+##  Principales Endpoints (Ejemplos)
 
 Aquí algunos de los endpoints clave para interactuar con la API. Asegúrate de que el servidor esté corriendo. Por defecto, las rutas están prefijadas con `/api`.
 
@@ -139,9 +146,53 @@ Aquí algunos de los endpoints clave para interactuar con la API. Asegúrate de 
 
 Consulta la colección de Postman para ver todos los endpoints disponibles, sus parámetros, cuerpos de solicitud esperados y ejemplos de respuesta.
 
+## 📄 Documentación de la API con Swagger
+
+La API cuenta con documentación interactiva generada con Swagger (OpenAPI). Esto permite explorar los endpoints disponibles, sus parámetros, modelos de datos y probar las solicitudes directamente desde el navegador.
+
+Para acceder a la documentación de Swagger, una vez que el servidor esté corriendo (ya sea localmente o en Docker), navega a la siguiente URL:
+
+`http://localhost:PORT/api-docs`
+
+(Reemplaza `PORT` con el puerto en el que esté corriendo la aplicación, por defecto 8080).
+
+##  Documentación de la API con Swagger
+
+La API cuenta con documentación interactiva generada con Swagger (OpenAPI). Esto permite explorar los endpoints disponibles, sus parámetros, modelos de datos y probar las solicitudes directamente desde el navegador.
+
+Para acceder a la documentación de Swagger, una vez que el servidor esté corriendo (ya sea localmente o en Docker), navega a la siguiente URL:
+
+`http://localhost:PORT/api-docs`
+
+(Reemplaza `PORT` con el puerto en el que esté corriendo la aplicación, por defecto 8080).
+
+## 🐳 Docker
+
+Este proyecto está disponible como una imagen Docker en Docker Hub. Puedes descargarla y ejecutarla fácilmente.
+
+1.  **Descargar la imagen Docker:**
+    ```bash
+    docker pull juanpirriv/nodejs-auth-api
+    ```
+
+2.  **Ejecutar el contenedor:**
+    Asegúrate de tener un archivo `.env` configurado localmente con las variables de entorno necesarias (especialmente `MONGO_URI`). Luego, puedes ejecutar el contenedor mapeando el puerto y montando el archivo `.env`:
+    ```bash
+    docker run -d -p 8080:8080 --env-file .env juanpirriv/nodejs-auth-api
+    ```
+    Reemplaza `8080:8080` si necesitas mapear a un puerto diferente en tu máquina local. El contenedor leerá las variables de entorno desde el archivo `.env` que le montes.
+
+Puedes encontrar la imagen en Docker Hub aquí: [https://hub.docker.com/repository/docker/juanpirriv/nodejs-auth-api](https://hub.docker.com/repository/docker/juanpirriv/nodejs-auth-api)
+
 ## ✅ Tecnologías Usadas
 
+*   **Mocha**: Framework de testing para JavaScript.
+*   **Chai**: Librería de aserciones para testing en JavaScript.
+*   **Supertest**: Librería para testing de APIs HTTP en Node.js.
+*   **Swagger (OpenAPI)**: Para generar documentación interactiva de la API.
 *   **Node.js**: Entorno de ejecución para JavaScript del lado del servidor.
+*   **Docker**: Plataforma para desarrollar, enviar y ejecutar aplicaciones en contenedores.
+*   **Swagger (OpenAPI)**: Para generar documentación interactiva de la API.
 *   **Express.js**: Framework web para Node.js, utilizado para construir la API.
 *   **MongoDB**: Base de datos NoSQL orientada a documentos.
 *   **Mongoose**: ODM (Object Data Modeling) para MongoDB y Node.js.
@@ -154,6 +205,92 @@ Consulta la colección de Postman para ver todos los endpoints disponibles, sus 
 *   **Nodemailer**: Para el envío de correos electrónicos.
 *   **Twilio SDK**: Para la integración con servicios de Twilio (SMS).
 *   Y otras dependencias listadas en `package.json`.
+## 🧪 Testing
+
+This project uses Mocha, Chai, and Supertest for testing the API.
+
+### Mocha
+
+Mocha is a JavaScript test framework that runs on Node.js and in the browser. It allows you to define test suites and test cases using a simple and intuitive syntax.
+
+
+#### Example
+
+The Swagger documentation for this API is available at http://localhost:8080/api/docs/. It provides a comprehensive overview of all the available endpoints and their parameters.
+
+For example, the documentation for the `POST /api/carts` endpoint shows that it creates a new cart.
+
+```
+POST /api/carts
+```
+
+This endpoint requires authentication.
+
+### Testing con Mocha, Chai y Supertest
+
+Este proyecto utiliza Mocha, Chai y Supertest para realizar pruebas automatizadas de la API.
+
+#### Configuración de las Pruebas
+
+1.  **Instalación de Dependencias:**
+    Asegúrate de tener instaladas las dependencias de desarrollo necesarias:
+    ```bash
+    npm install --save-dev mocha chai supertest
+    ```
+
+2.  **Ejecución de las Pruebas:**
+    Para ejecutar las pruebas, utiliza el siguiente comando:
+    ```bash
+    npm test
+    ```
+    Este comando ejecutará todos los archivos de prueba ubicados en el directorio `test/`.
+
+#### Estructura de las Pruebas
+
+Los archivos de prueba se encuentran en el directorio `test/` y siguen una estructura similar a la siguiente:
+
+```
+test/
+├── cart.test.js
+├── product.test.js
+├── session.test.js
+└── ticket.test.js
+```
+
+Cada archivo de prueba contiene pruebas para una funcionalidad específica de la API.
+
+#### Mocha
+
+Mocha es un framework de pruebas de JavaScript que se ejecuta en Node.js y en el navegador. Permite definir suites de pruebas y casos de prueba utilizando una sintaxis simple e intuitiva.
+
+##### Conceptos Clave
+
+*   **Suite de Pruebas:** Un grupo de pruebas relacionadas, definido utilizando la función `describe`.
+*   **Caso de Prueba:** Una prueba individual, definida utilizando la función `it`.
+*   **Hooks:** Funciones que se ejecutan antes o después de los casos de prueba, como `before` (se ejecuta antes de todas las pruebas) y `after` (se ejecuta después de todas las pruebas).
+
+
+#### Chai
+
+Chai es una librería de aserciones que proporciona una variedad de estilos de aserción, lo que facilita la escritura de pruebas expresivas y legibles.
+
+##### Conceptos Clave
+
+*   **Expect:** Una función utilizada para realizar aserciones sobre el comportamiento esperado del código.
+*   **Estilos de Aserción:** Chai proporciona varios estilos de aserción, como `expect`, `should` y `assert`.
+
+
+#### Supertest
+
+Supertest es una librería para probar APIs HTTP. Permite realizar solicitudes HTTP al servidor y verificar las respuestas esperadas.
+
+##### Conceptos Clave
+
+*   **Agent:** Un objeto que mantiene las cookies y la información de sesión a través de las solicitudes.
+*   **Métodos HTTP:** Supertest proporciona métodos para realizar diferentes tipos de solicitudes HTTP, como `get`, `post`, `put` y `delete`.
+*   **Send:** Un método para enviar datos con la solicitud (por ejemplo, en el cuerpo de la solicitud para las solicitudes POST y PUT).
+
+##### Ejemplo
 
 ## 📎 Licencia
 
@@ -182,9 +319,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
- `[2025]` y `[Juan Pablo Rivero Albornoz]` .
+ `[2025]` y `[JuanpiRiv]` .
 
-## 📝 Contacto / Autor
+##  Autor
 
 Desarrollado por **[JuanpiRiv]**
 

@@ -2,6 +2,15 @@ import productRepository from '../repositories/product.repository.js';
 import mongoose from 'mongoose';
 // import { ApiError } from '../utils/api.utils.js';
 
+
+class ApiError extends Error {
+    constructor(message, statusCode = 500) {
+        super(message);
+        this.statusCode = statusCode;
+        this.name = 'ApiError';
+    }
+}
+
 class ProductService {
     async getProducts(filter, options) {
         return await productRepository.model.paginate(filter, options);

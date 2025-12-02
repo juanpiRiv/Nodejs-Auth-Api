@@ -1,4 +1,5 @@
 import cartRepository from '../repositories/cart.repository.js';
+import productRepository from '../repositories/product.repository.js';
 
 class CartService {
     async createCart(cartData) {
@@ -9,13 +10,17 @@ class CartService {
         return await cartRepository.findById(id);
     }
 
-    async addProductToCart(cid, pid, quantity) {
+async addProductToCart(cid, pid, quantity) {
+        const product = await productRepository.findById(pid);
+        if (!product) {
+            throw new Error('Product not found');
+        }
         return await cartRepository.model.findByIdAndUpdate(
             cid,
             { $push: { products: { product: pid, quantity } } },
             { new: true }
         );
-    }
+}
 
     async updateCart(cid, products) {
         return await cartRepository.model.findByIdAndUpdate(cid, { products }, { new: true });
