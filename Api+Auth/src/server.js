@@ -7,6 +7,7 @@ import mongoose from 'mongoose';
 
 import productsRouter from './routes/product.routes.js';
 import cartsRouter from './routes/cart.routes.js';
+import paymentsRouter from './routes/payments.routes.js';
 import usersRouter from './routes/user.routes.js';
 import sessionsRouter from './routes/session.routes.js';
 import ticketRouter from './routes/ticket.routes.js';
@@ -67,6 +68,7 @@ app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(specs));
 // Rutas
 app.use('/api/products', productsRouter);
 app.use('/api/carts', cartsRouter);
+app.use('/api/carts', paymentsRouter);
 app.use('/api/users', usersRouter); 
 app.use('/api/sessions', sessionsRouter);
 app.use('/api/tickets', ticketRouter);

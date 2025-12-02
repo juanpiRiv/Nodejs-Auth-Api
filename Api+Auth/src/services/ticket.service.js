@@ -17,6 +17,10 @@ class TicketService {
         return await ticketRepository.findByUserContext(context);
     }
 
+    async getTicketsByExternalReference(cartId) {
+        return await ticketRepository.findByExternalReference(cartId);
+    }
+
     async getTicketByPaymentId(paymentId) {
         return await ticketRepository.findByPaymentId(paymentId);
     }

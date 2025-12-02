@@ -72,7 +72,6 @@ export const sendPurchaseEmail = async (userEmail, ticket, items = []) => {
 
   try {
     await transporter.sendMail(mailOptions);
-    console.log("Correo de compra enviado a:", userEmail);
   } catch (error) {
     console.error("Error al enviar el correo:", error);
   }

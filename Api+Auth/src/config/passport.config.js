@@ -20,7 +20,6 @@ const initializePassport = () => {
             passwordField: 'password'
         },
         async (email, password, done) => {
-            console.log('Login attempt:', { email, password }); // Para depuración
             if (!email || !password) {
                 return done(null, false, { message: 'Email y contraseña son obligatorios' });
             }

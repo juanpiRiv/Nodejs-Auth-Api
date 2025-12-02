@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import Ticket from '../dao/models/Ticket.model.js';
 class TicketRepository {
   constructor(ticketModel) {
@@ -16,6 +17,7 @@ class TicketRepository {
     const orFilters = [];
     if (paymentId) orFilters.push({ payment_id: paymentId });
     if (preferenceId) orFilters.push({ preference_id: preferenceId });
+    if (externalReference) orFilters.push({ external_reference: externalReference });
     if (!orFilters.length) return null;
     return this.model.findOne({ $or: orFilters });
   }
@@ -28,18 +30,30 @@ class TicketRepository {
 
   async findByUserContext({ email, cartId, userId }) {
     const orFilters = [];
+    const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const emailNormalized = email?.trim?.() || null;
+    const emailRegex = emailNormalized ? { $regex: `^\\s*${escapeRegex(emailNormalized)}\\s*$`, $options: 'i' } : null;
     if (userId) {
-      orFilters.push({ user: userId });
+      const userFilter = mongoose.Types.ObjectId.isValid(userId)
+        ? new mongoose.Types.ObjectId(userId)
+        : userId;
+      orFilters.push({ user: userFilter });
     }
     if (email) {
-      orFilters.push({ purchaser: email });
-      orFilters.push({ payer_email: email });
+      orFilters.push({ purchaser: emailRegex || emailNormalized });
+      orFilters.push({ payer_email: emailRegex || emailNormalized });
     }
     if (cartId) {
-      orFilters.push({ external_reference: String(cartId) });
+      const cartStr = String(cartId);
+      orFilters.push({ external_reference: cartStr });
     }
     if (!orFilters.length) return [];
     return this.model.find({ $or: orFilters });
+  }
+
+  async findByExternalReference(cartId) {
+    if (!cartId) return [];
+    return this.model.find({ external_reference: String(cartId) });
   }
 }
 
