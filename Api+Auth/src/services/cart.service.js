@@ -9,6 +9,9 @@ class CartService {
     async getCartById(id) {
         return await cartRepository.findById(id);
     }
+    async getAllCarts() {
+        return await cartRepository.findAll();
+}
 
 async addProductToCart(cid, pid, quantity) {
         const product = await productRepository.findById(pid);

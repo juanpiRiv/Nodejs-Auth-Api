@@ -15,6 +15,9 @@ class UserRepository {
   async delete(id) {
     return this.model.findByIdAndDelete(id);
   }
+  async findByCartId(cartId) {
+    return this.model.findOne({ cart: cartId });
+  }
 }
 
 export default new UserRepository(User);

@@ -1,6 +1,6 @@
 // src/routes/ticket.routes.js
 import express from 'express';
-import { getTickets, getTicketById, getTicketByCode, createTicket } from '../controllers/ticket.controller.js'; // Asumiendo que createTicket existe
+import { getTickets, getTicketById, getTicketByCode, createTicket, getMyTickets, getMyLatestTicket } from '../controllers/ticket.controller.js'; // Asumiendo que createTicket existe
 import passport from 'passport';
 import authorize from '../middlewares/authorization.middleware.js';
 import { isAuthenticated } from '../middlewares/auth.middleware.js';
@@ -60,6 +60,10 @@ router.post('/', authenticateJWT, validateBody(ticketSchema), createTicket);
  *         description: No autorizado
  */
 router.get('/', authenticateJWT, authorize('admin'), getTickets); // solo admin
+
+// Tickets del usuario autenticado
+router.get('/mine', authenticateJWT, getMyTickets);
+router.get('/mine/latest', authenticateJWT, getMyLatestTicket);
 
 /**
  * @openapi

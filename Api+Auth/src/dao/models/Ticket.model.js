@@ -1,14 +1,14 @@
 import mongoose from 'mongoose';
 
-const ticketCollection = 'tickets'; // colección para tickets
+const ticketCollection = 'tickets';
 
 const ticketSchema = new mongoose.Schema({
     code: {
         type: String,
         unique: true,
         required: true
-        // Considerar agregar un default con una función para generar códigos únicos, ej: default: () => generateUniqueCode()
     },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'users' },
     purchase_datetime: {
         type: Date,
         default: Date.now,
@@ -18,29 +18,27 @@ const ticketSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    purchaser: { // Correo del usuario que realiza la compra
+    purchaser: {
         type: String,
         required: true
-        // Podría ser una referencia al usuario si prefieres:
-        // type: mongoose.Schema.Types.ObjectId,
-        // ref: 'users',
-        // required: true
     },
-    products: [ 
+    products: [
         {
             product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
             quantity: { type: Number, required: true }
         }
-    ]
-    // Puedes añadir otros campos si los necesitas, como los productos no comprados,
-    // pero el requisito mínimo es este.
+    ],
+    // Datos del pago en Mercado Pago para auditoria y trazabilidad
+    payment_id: { type: String, index: true, unique: true, sparse: true },
+    preference_id: { type: String, index: true },
+    external_reference: { type: String, index: true }, // normalmente el cartId
+    payment_status: { type: String },
+    currency: { type: String },
+    payment_method: { type: String }, // ej: payment_type_id (card, account_money, etc)
+    installments: { type: Number },
+    payer_email: { type: String },
+    receipt_url: { type: String }
 });
-
-// Función placeholder para generar código único (deberías implementar una lógica real)
-// function generateUniqueCode() {
-//     // Lógica para generar un código único, por ejemplo, usando UUID o una combinación de timestamp y aleatorio
-//     return `TICKET-${Date.now()}-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
-// }
 
 const ticketModel = mongoose.model(ticketCollection, ticketSchema);
 

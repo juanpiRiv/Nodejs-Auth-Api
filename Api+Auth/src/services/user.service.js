@@ -66,6 +66,10 @@ class UserService {
         return await userRepository.delete(userId);
     }
 
+    async getUserByCartId(cartId) {
+        return await userRepository.findByCartId(cartId);
+    }
+
     async getAllUsers() {
         const users = await userRepository.model.find();
         return users.map(user => this.getUserDTO(user));

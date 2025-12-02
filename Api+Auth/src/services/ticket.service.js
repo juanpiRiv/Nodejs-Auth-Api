@@ -13,6 +13,18 @@ class TicketService {
         return await ticketRepository.findById(ticketId);
     }
 
+    async getTicketsByUserContext(context) {
+        return await ticketRepository.findByUserContext(context);
+    }
+
+    async getTicketByPaymentId(paymentId) {
+        return await ticketRepository.findByPaymentId(paymentId);
+    }
+
+    async findExistingForPayment(match) {
+        return await ticketRepository.findExistingForPayment(match);
+    }
+
     async getTicketByCode(ticketCode) {
         return await ticketRepository.model.findOne({ code: ticketCode });
     }

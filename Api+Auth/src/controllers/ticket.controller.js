@@ -59,3 +59,39 @@ export const getTicketById = async (req, res) => {
     res.status(500).json({ status: 'error', message: error.message });
   }
 };
+
+export const getMyTickets = async (req, res) => {
+  try {
+    const email = req.user?.email;
+    const role = req.user?.role;
+    const cartId = req.query?.cartId || req.user?.cart;
+    const userId = req.user?.id || req.user?._id;
+    if (!email) {
+      return res.status(401).json({ status: 'error', message: 'Unauthorized' });
+    }
+    const tickets = role === 'admin'
+      ? await ticketService.getAllTickets()
+      : await ticketService.getTicketsByUserContext({ email, cartId, userId });
+    const ticketDTOs = tickets.map(ticket => new TicketDTO(ticket));
+    res.json({ status: 'success', tickets: ticketDTOs });
+  } catch (error) {
+    res.status(500).json({ status: 'error', message: error.message });
+  }
+};
+
+export const getMyLatestTicket = async (req, res) => {
+  try {
+    const email = req.user?.email;
+    const cartId = req.query?.cartId || req.user?.cart;
+    const userId = req.user?.id || req.user?._id;
+    if (!email) {
+      return res.status(401).json({ status: 'error', message: 'Unauthorized' });
+    }
+    const tickets = await ticketService.getTicketsByUserContext({ email, cartId, userId });
+    const sorted = tickets.sort((a, b) => new Date(b.purchase_datetime) - new Date(a.purchase_datetime));
+    const latest = sorted[0] || null;
+    res.json({ status: 'success', ticket: latest ? new TicketDTO(latest) : null });
+  } catch (error) {
+    res.status(500).json({ status: 'error', message: error.message });
+  }
+};
