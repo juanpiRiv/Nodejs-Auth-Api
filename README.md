@@ -55,8 +55,12 @@ Api+Auth/
 Mocha + Chai + Supertest. Ejecuta `npm test` (requiere Mongo accesible según config de pruebas).
 
 ## 🐳 Docker
-Imagen publicada: `docker pull juanpirriv/nodejs-auth-api`  
-Ejecución típica: `docker run -d -p 8080:8080 --env-file .env juanpirriv/nodejs-auth-api`
+Imagen publicada: `docker pull juanpirriv/nodejs-auth-api:1.1.0` (también `latest`).  
+Ejecución típica: 
+```bash
+docker pull juanpirriv/nodejs-auth-api:1.1.0
+docker run -d -p 8080:8080 --env-file .env juanpirriv/nodejs-auth-api:1.1.0
+```
 
 ## Notas
 - No mezcles credenciales PROD con tarjetas de prueba; en sandbox usa `TEST-...` y `sandbox_init_point`.

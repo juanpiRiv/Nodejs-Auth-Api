@@ -152,6 +152,37 @@
 			]
 		},
 		{
+			"name": "Tickets",
+			"item": [
+				{
+					"name": "Mis tickets por cartId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/tickets/mine?cartId=692ecc87a6c9be5c3d5bef0c",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tickets",
+								"mine"
+							],
+							"query": [
+								{
+									"key": "cartId",
+									"value": "692ecc87a6c9be5c3d5bef0c"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Carts",
 			"item": [
 				{
@@ -241,6 +272,27 @@
 								"carts",
 								"67fee1076c736d06475fb228",
 								"purchase\n"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Iniciar pago MP (genera link)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/carts/692ed00cfda624cf56b53299/pay",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"carts",
+								"692ed00cfda624cf56b53299",
+								"pay"
 							]
 						}
 					},
