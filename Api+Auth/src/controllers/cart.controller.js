@@ -189,8 +189,12 @@ export const deleteProductFromCart = async (req, res) => {
         const cart = await cartService.getCartById(cid);
         if (!cart) return res.status(404).json({ message: "Carrito no encontrado" });
 
-        const productIndex = cart.products.findIndex(p => p.product.toString() === pid);
-        if (productIndex === -1) {
+        const productExists = cart.products.some(({ product }) => {
+            const productId = product?._id ?? product;
+            return productId && productId.toString() === pid;
+        });
+
+        if (!productExists) {
             return res.status(404).json({ status: 'error', message: 'Producto no encontrado en el carrito' });
         }
 
