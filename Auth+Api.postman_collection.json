@@ -16,7 +16,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"email\":\"juanpirivero@gmail.com\", \"password\":\"123\"}",
+							"raw": "{\"email\":\"reycristina11@gmail.com\", \"password\":\"123\"}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -77,7 +77,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"email\":\"adminCoder@coder.com\", \"password\":\"adminCod3r123\"}",
+							"raw": "{\"email\":\"juanpirivero08@gmail.com\", \"password\":\"123\"}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -152,37 +152,6 @@
 			]
 		},
 		{
-			"name": "Tickets",
-			"item": [
-				{
-					"name": "Mis tickets por cartId",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:8080/api/tickets/mine?cartId=692ecc87a6c9be5c3d5bef0c",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"tickets",
-								"mine"
-							],
-							"query": [
-								{
-									"key": "cartId",
-									"value": "692ecc87a6c9be5c3d5bef0c"
-								}
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
 			"name": "Carts",
 			"item": [
 				{
@@ -199,7 +168,7 @@
 							"port": "8080",
 							"path": [
 								"api",
-								"carts"
+								"cart"
 							]
 						}
 					},
@@ -207,6 +176,37 @@
 				},
 				{
 					"name": "Agregar producto a carrito creado",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"quantity\":\"2\"\r\n} ",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/carts/681e68aca2d772bbdd755d3a/products/67d343e173f1cb0a35e45bac",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"carts",
+								"681e68aca2d772bbdd755d3a",
+								"products",
+								"67d343e173f1cb0a35e45bac"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PAY",
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -251,48 +251,6 @@
 								"api",
 								"carts",
 								"66a84931ae36ac606d26b142"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Comprar Carrito aca quedamos",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"url": {
-							"raw": "localhost:8080/api/carts/67fee1076c736d06475fb228/purchase\n",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"carts",
-								"67fee1076c736d06475fb228",
-								"purchase\n"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Iniciar pago MP (genera link)",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"url": {
-							"raw": "localhost:8080/api/carts/692ed00cfda624cf56b53299/pay",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"carts",
-								"692ed00cfda624cf56b53299",
-								"pay"
 							]
 						}
 					},
@@ -478,7 +436,7 @@
 			"name": "ticket",
 			"item": [
 				{
-					"name": "ticket",
+					"name": "ticket por ID admin",
 					"request": {
 						"method": "GET",
 						"header": []
@@ -487,6 +445,22 @@
 				},
 				{
 					"name": "ticketxid",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "ticket mine",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "ticket mine latest",
 					"request": {
 						"method": "GET",
 						"header": []
