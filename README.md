@@ -47,7 +47,7 @@ Api+Auth/
 │  └─ server.js
 ├─ logs/              # generado en runtime (ignorar en git)
 ├─ .env.example
-└─ Auth+Api.postman_collectionv2.json
+└─ Auth+Api.postman_collection.json
 ```
 
 ## ✅ Tests
