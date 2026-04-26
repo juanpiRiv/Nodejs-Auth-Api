@@ -10,6 +10,7 @@ import cartsRouter from './routes/cart.routes.js';
 import usersRouter from './routes/user.routes.js';
 import sessionsRouter from './routes/session.routes.js';
 import ticketRouter from './routes/ticket.routes.js';
+import paymentRouter from './routes/payment.routes.js';
 import session from 'express-session';
 import methodOverride from 'method-override';
 import MongoStore from 'connect-mongo';
@@ -70,6 +71,7 @@ app.use('/api/carts', cartsRouter);
 app.use('/api/users', usersRouter); 
 app.use('/api/sessions', sessionsRouter);
 app.use('/api/tickets', ticketRouter);
+app.use('/api/payments', paymentRouter);
 // app.use('/', viewsRouter); // Rutas de vistas
 
 // Middleware para manejar rutas no encontradas (404)
