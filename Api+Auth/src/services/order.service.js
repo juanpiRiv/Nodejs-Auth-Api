@@ -10,7 +10,7 @@ class OrderService {
     }
 
     async getOrderByExternalReference(externalReference) {
-        return orderRepository.findOne({ _id: externalReference });
+        return orderRepository.findById(externalReference);
     }
 
     async updateOrder(orderId, data) {
