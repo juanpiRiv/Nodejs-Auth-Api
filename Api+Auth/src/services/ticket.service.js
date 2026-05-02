@@ -16,6 +16,10 @@ class TicketService {
     async getTicketByCode(ticketCode) {
         return await ticketRepository.model.findOne({ code: ticketCode });
     }
+
+    async getTicketByMpPaymentId(mpPaymentId) {
+        return await ticketRepository.findOne({ mpPaymentId: String(mpPaymentId) });
+    }
 }
 
 export default new TicketService();

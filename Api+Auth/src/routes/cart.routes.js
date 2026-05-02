@@ -572,6 +572,7 @@ router.delete('/:cid', authenticateJWT, authorize('user'), deleteCart);
  *                   type: string
  *                   example: Compra realizada con éxito
  */
+// Deprecated: mantener por compatibilidad. Nuevo flujo recomendado: /api/payments/create-preference/:cid
 router.post('/:cid/purchase', authenticateJWT, authorize('user'), purchaseCart); 
 
 export default router;

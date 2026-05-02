@@ -9,6 +9,9 @@ class TicketRepository {
   async findById(id) {
     return this.model.findById(id);
   }
+  async findOne(filter) {
+    return this.model.findOne(filter);
+  }
   async update(id, data) {
     return this.model.findByIdAndUpdate(id, data, { new: true });
   }

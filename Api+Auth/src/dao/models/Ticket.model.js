@@ -26,6 +26,15 @@ const ticketSchema = new mongoose.Schema({
         // ref: 'users',
         // required: true
     },
+    mpPaymentId: {
+        type: String,
+        default: null
+    },
+    paymentStatus: {
+        type: String,
+        enum: ['pending', 'approved', 'rejected'],
+        default: 'pending'
+    },
     products: [ 
         {
             product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
